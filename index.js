@@ -37,7 +37,6 @@ function simpleJsonLogger() {
         requestSize: res.body,
         time: getPrettyDate()
       };
-      console.log(logObject);
       console.log(JSON.stringify(logObject));
     });
     next();
