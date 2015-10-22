@@ -28,12 +28,19 @@ function simpleJsonLogger() {
     onHeaders(res, function onHeaders() {
       var diff = process.hrtime(startAt)
       var time = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
+      var ip = req.connection.remoteAddress;
+      ip = "::ffff:127.0.0.1";
+      var ipParts = ip.split(':');
+      var ipv4 = ipParts[ipParts.length - 1];
+      var ipv6 = ip.replace(ipv4, '');
       var logObject = {
         path: req.path,
         method: req.method,
         requestTimeLength: time,
         ua: req.headers['user-agent'],
         ip: req.connection.remoteAddress,
+        ip: ipv4,
+        ipv6: ipv4,
         requestSize: res.body,
         time: getPrettyDate(),
         statusCode: res.statusCode
@@ -44,3 +51,4 @@ function simpleJsonLogger() {
   }
 }
 module.exports = simpleJsonLogger;
+
