@@ -35,7 +35,8 @@ function simpleJsonLogger() {
         ua: req.headers['user-agent'],
         ip: req.connection.remoteAddress,
         requestSize: res.body,
-        time: getPrettyDate()
+        time: getPrettyDate(),
+        statusCode: res.statusCode
       };
       console.log(JSON.stringify(logObject));
     });
