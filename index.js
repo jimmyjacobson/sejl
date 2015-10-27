@@ -6,6 +6,7 @@
  */
 var onHeaders = require('on-headers');
 var dgram = require('dgram');
+var os = require('os');
 
 function getPrettyDate() {
   var d = new Date();
@@ -47,7 +48,8 @@ function simpleJsonLogger(host, port, disableConsole) {
         ipv6: ipv4,
         requestSize: res.body,
         time: getPrettyDate(),
-        statusCode: res.statusCode
+        statusCode: res.statusCode,
+        hostname: os.hostname()
       };
       var logEntry = JSON.stringify(logObject);
       if (!disableConsole) {
