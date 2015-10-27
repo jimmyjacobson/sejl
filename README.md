@@ -16,6 +16,28 @@ Now on every request, you'll get something similar to this:
 
     {"path":"/","method":"GET","requestTimeLength":"6.55","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36","ip":"::1","time":"2015-10-21 13:35:37"}
 
+### Logstash UDP support ###
+
+If you supply a host and a port when you initiate simple-express-json-logger, you'll get log entries to your UDP server.  
+
+    var express = require('express');
+    var simpleJsonLogger = require('simple-express-json-logger');
+    // Setup your express app
+    var app = express();
+    // Send message via udp to logstash.server.com:12345
+    app.use(simpleJsonLogger('logstash.server.com', 12345));
+
+You can also use the optional flag to turn off the console.log message so you can get only the UDP message sent.
+
+    var express = require('express');
+    var simpleJsonLogger = require('simple-express-json-logger');
+    // Setup your express app
+    var app = express();
+    // Send message via udp to logstash.server.com:12345, disable console.log
+    app.use(simpleJsonLogger('logstash.server.com', 12345, true));
+
+
+
 ## License ##
 
 simple-express-json-logger is licensed under ISC.

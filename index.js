@@ -5,6 +5,7 @@
  *
  */
 var onHeaders = require('on-headers');
+var dgram = require('dgram');
 
 function getPrettyDate() {
   var d = new Date();
@@ -22,7 +23,10 @@ function getPrettyDate() {
   return [year, month, day].join('-') + " "+[h, m, s].join(':');
 }
 
-function simpleJsonLogger() {
+function simpleJsonLogger(host, port, disableConsole) {
+  // Set disableConsole to false by default if it's not included
+  disableConsole = typeof disableConsole !== 'undefined' ?  disableConsole : false;
+
   return function(req, res, next) {
     var startAt = process.hrtime();
     onHeaders(res, function onHeaders() {
@@ -45,10 +49,22 @@ function simpleJsonLogger() {
         time: getPrettyDate(),
         statusCode: res.statusCode
       };
-      console.log(JSON.stringify(logObject));
+      var logEntry = JSON.stringify(logObject);
+      if (!disableConsole) {
+        console.log(logEntry);
+      }
+
+      if (host && port) {
+        var message = new Buffer(logEntry);
+        var client = dgram.createSocket('udp4');
+        client.send(message, 0, message.length, port, host, function(err, bytes) {
+          if (err) throw err;
+          client.close();
+        });
+
+      }
     });
     next();
   }
 }
 module.exports = simpleJsonLogger;
-
