@@ -6,7 +6,6 @@
  */
 var onHeaders = require('on-headers');
 var dgram = require('dgram');
-var os = require('os');
 
 function getPrettyDate() {
   var d = new Date();
@@ -25,9 +24,6 @@ function getPrettyDate() {
 }
 
 function simpleJsonLogger(host, port, options) {
-  // Set disableConsole to false by default if it's not included
-  disableConsole = typeof disableConsole !== 'undefined' ?  disableConsole : false;
-
   return function(req, res, next) {
     var startAt = process.hrtime();
     onHeaders(res, function onHeaders() {
@@ -49,7 +45,6 @@ function simpleJsonLogger(host, port, options) {
         requestSize: res.body,
         time: getPrettyDate(),
         statusCode: res.statusCode,
-        hostname: os.hostname()
       };
       if (options.loggedFromEnv) {
         options.loggedFromEnv.forEach(function(envVar) {
