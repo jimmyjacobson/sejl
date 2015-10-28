@@ -24,7 +24,7 @@ function getPrettyDate() {
   return [year, month, day].join('-') + " "+[h, m, s].join(':');
 }
 
-function simpleJsonLogger(host, port, disableConsole) {
+function simpleJsonLogger(host, port, options) {
   // Set disableConsole to false by default if it's not included
   disableConsole = typeof disableConsole !== 'undefined' ?  disableConsole : false;
 
@@ -51,8 +51,14 @@ function simpleJsonLogger(host, port, disableConsole) {
         statusCode: res.statusCode,
         hostname: os.hostname()
       };
+      if (options.loggedFromEnv) {
+        options.loggedFromEnv.forEach(function(envVar) {
+          if (process.env[envVar])
+            logObject[envVar] = process.env[envVar];
+        });
+      }
       var logEntry = JSON.stringify(logObject);
-      if (!disableConsole) {
+      if (!options.disableConsole) {
         console.log(logEntry);
       }
 

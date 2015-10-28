@@ -29,13 +29,13 @@ If you supply a host and a port when you initiate simple-express-json-logger, yo
 
 You can also use the optional flag to turn off the console.log message so you can get only the UDP message sent.
 
-    var express = require('express');
-    var simpleJsonLogger = require('simple-express-json-logger');
-    // Setup your express app
-    var app = express();
-    // Send message via udp to logstash.server.com:12345, disable console.log
-    app.use(simpleJsonLogger('logstash.server.com', 12345, true));
+    app.use(simpleJsonLogger('logstash.server.com', 12345, { disableConsole: true }));
 
+You can log environmental variables as well, like by adding them to the array in your options:
+
+    app.use(simpleJsonLogger('logstash.server.com', 12345, {
+      loggedFromEnv: ['envVar1', 'envVar2']
+    ));
 
 
 ## License ##
