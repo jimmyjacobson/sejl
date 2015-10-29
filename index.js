@@ -52,10 +52,14 @@ function simpleJsonLogger(host, port, options) {
             logObject[envVar] = process.env[envVar];
         });
       }
+      if (options.tags) {
+        logObject.tags = options.tags
+      }
       var logEntry = JSON.stringify(logObject);
       if (!options.disableConsole) {
         console.log(logEntry);
       }
+
 
       if (host && port) {
         var message = new Buffer(logEntry);

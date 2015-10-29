@@ -37,6 +37,11 @@ You can log environmental variables as well, like by adding them to the array in
       loggedFromEnv: ['envVar1', 'envVar2']
     ));
 
+You can also add arbitrary tags that will get forwarded to your logs.  
+
+    app.use(simpleJsonLogger('logstash.server.com', 12345, {
+      tags: ['web server 1', 'staging environment']
+    ));
 
 ## License ##
 
