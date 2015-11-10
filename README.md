@@ -18,7 +18,7 @@ Now on every request, you'll get something similar to this:
 
 ### Logstash UDP support ###
 
-If you supply a host and a port when you initiate simple-express-json-logger, you'll get log entries to your UDP server.  
+If you supply a host and a port when you initiate simple-express-json-logger, you'll get log entries to your UDP server.
 
     var express = require('express');
     var simpleJsonLogger = require('simple-express-json-logger');
@@ -26,6 +26,19 @@ If you supply a host and a port when you initiate simple-express-json-logger, yo
     var app = express();
     // Send message via udp to logstash.server.com:12345
     app.use(simpleJsonLogger('logstash.server.com', 12345));
+
+Setup your logstash server like so:
+
+    input {
+      udp {
+        port => 12345
+        type => 'node-logs' // Or whatever you want the logs to show up as 
+        codec => 'json'
+      }
+      output {
+        // Whatever you want
+      }
+    }
 
 You can also use the optional flag to turn off the console.log message so you can get only the UDP message sent.
 
