@@ -1,6 +1,6 @@
 # simple-express-json-logger
 
-simple-express-json-logger is a simple express middleware that will output a very simple log in JSON format.  It has no options, nor does it have any customization yet.
+simple-express-json-logger is a simple express middleware that will output a very simple log in JSON format.
 
 requestTimeLength is in milliseconds.
 
@@ -32,7 +32,7 @@ Setup your logstash server like so:
     input {
       udp {
         port => 12345
-        type => 'node-logs' // Or whatever you want the logs to show up as 
+        type => 'node-logs' // Or whatever you want the logs to show up as
         codec => 'json'
       }
       output {

@@ -7,6 +7,17 @@
 var onHeaders = require('on-headers');
 var dgram = require('dgram');
 
+var client = dgram.createSocket('udp4');
+
+process.on('SIGINT', function() {
+  if (client) {
+    console.log("Got SIGINT.  Closing client.");
+    client.close();
+    // This seems pretty ghetto.  But I don't know a better way to do it.
+    client = null;
+  }
+});
+
 function getPrettyDate() {
   var d = new Date();
   month = '' + (d.getMonth() + 1),
@@ -68,10 +79,8 @@ function simpleJsonLogger(host, port, options) {
 
       if (host && port) {
         var message = new Buffer(logEntry);
-        var client = dgram.createSocket('udp4');
         client.send(message, 0, message.length, port, host, function(err, bytes) {
           if (err) throw err;
-          client.close();
         });
 
       }
