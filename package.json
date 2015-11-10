@@ -1,6 +1,6 @@
 {
   "name": "simple-express-json-logger",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A simple middleware for express that logs in a json format.",
   "main": "index.js",
   "scripts": {
