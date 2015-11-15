@@ -92,3 +92,4 @@ function simpleJsonLogger(host, port, options) {
   next();
   }
 }
+module.exports = simpleJsonLogger;
