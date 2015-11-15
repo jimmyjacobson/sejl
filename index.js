@@ -34,43 +34,47 @@ function getPrettyDate() {
   return [year, month, day].join('-') + " "+[h, m, s].join(':');
 }
 
+function getLogObject(req, res, startAt, options) {
+  var diff = process.hrtime(startAt)
+  var time = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
+  var ip = req.connection.remoteAddress;
+  var ipParts = ip.split(':');
+  var ipv4 = ipParts[ipParts.length - 1];
+  var ipv6 = ip.replace(ipv4, '');
+  var logObject = {
+    path: req.path,
+    method: req.method,
+    requestTimeLength: time,
+    ua: req.headers['user-agent'],
+    ip: req.connection.remoteAddress,
+    ip: ipv4,
+    ipv6: ipv4,
+    requestSize: res.body,
+    time: getPrettyDate(),
+    statusCode: res.statusCode,
+  };
+  if (req.method === 'PUT' || req.method === 'POST') {
+    // get put body
+    logObject['requestBody'] = req.body;
+  }
+
+  if (options.loggedFromEnv) {
+    options.loggedFromEnv.forEach(function(envVar) {
+      if (process.env[envVar])
+        logObject[envVar] = process.env[envVar];
+    });
+  }
+  if (options.tags) {
+    logObject.tags = options.tags
+  }
+  return logObject;
+}
+
 function simpleJsonLogger(host, port, options) {
   return function(req, res, next) {
     var startAt = process.hrtime();
     onHeaders(res, function onHeaders() {
-      var diff = process.hrtime(startAt)
-      var time = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
-      var ip = req.connection.remoteAddress;
-      ip = "::ffff:127.0.0.1";
-      var ipParts = ip.split(':');
-      var ipv4 = ipParts[ipParts.length - 1];
-      var ipv6 = ip.replace(ipv4, '');
-      var logObject = {
-        path: req.path,
-        method: req.method,
-        requestTimeLength: time,
-        ua: req.headers['user-agent'],
-        ip: req.connection.remoteAddress,
-        ip: ipv4,
-        ipv6: ipv4,
-        requestSize: res.body,
-        time: getPrettyDate(),
-        statusCode: res.statusCode,
-      };
-      if (req.method === 'PUT' || req.method === 'POST') {
-        // get put body
-        logObject['requestBody'] = req.body;
-      }
-
-      if (options.loggedFromEnv) {
-        options.loggedFromEnv.forEach(function(envVar) {
-          if (process.env[envVar])
-            logObject[envVar] = process.env[envVar];
-        });
-      }
-      if (options.tags) {
-        logObject.tags = options.tags
-      }
+      var logObject = getLogObject(req, res, startAt, options);
       var logEntry = JSON.stringify(logObject);
       if (!options.disableConsole) {
         console.log(logEntry);
@@ -88,4 +92,3 @@ function simpleJsonLogger(host, port, options) {
   next();
   }
 }
-module.exports = simpleJsonLogger;
