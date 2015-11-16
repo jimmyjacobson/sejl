@@ -10,7 +10,7 @@ requestTimeLength is in milliseconds.
     var simpleJsonLogger = require('simple-express-json-logger');
     // Setup your express app
     var app = express();
-    app.use(simpleJsonLogger());
+    app.use(simpleJsonLogger.logger);
 
 Now on every request, you'll get something similar to this:
 
@@ -25,7 +25,7 @@ If you supply a host and a port when you initiate simple-express-json-logger, yo
     // Setup your express app
     var app = express();
     // Send message via udp to logstash.server.com:12345
-    app.use(simpleJsonLogger('logstash.server.com', 12345));
+    app.use(simpleJsonLogger.logger('logstash.server.com', 12345));
 
 Setup your logstash server like so:
 
@@ -42,7 +42,7 @@ Setup your logstash server like so:
 
 You can also use the optional flag to turn off the console.log message so you can get only the UDP message sent.
 
-    app.use(simpleJsonLogger('logstash.server.com', 12345, { disableConsole: true }));
+    app.use(simpleJsonLogger.logger('logstash.server.com', 12345, { disableConsole: true }));
 
 You can log environmental variables as well, like by adding them to the array in your options:
 
@@ -52,7 +52,7 @@ You can log environmental variables as well, like by adding them to the array in
 
 You can also add arbitrary tags that will get forwarded to your logs.  
 
-    app.use(simpleJsonLogger('logstash.server.com', 12345, {
+    app.use(simpleJsonLogger.logger('logstash.server.com', 12345, {
       tags: ['web server 1', 'staging environment']
     ));
 

@@ -34,7 +34,7 @@ function getPrettyDate() {
   return [year, month, day].join('-') + " "+[h, m, s].join(':');
 }
 
-function getLogObject(req, res, startAt, options) {
+function getLogObject(req, res, startAt, options, callback) {
   var diff = process.hrtime(startAt)
   var time = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
   var ip = req.connection.remoteAddress;
@@ -67,8 +67,13 @@ function getLogObject(req, res, startAt, options) {
   if (options.tags) {
     logObject.tags = options.tags
   }
-  return logObject;
+  if (callback) {
+    return callback(logObject);
+  } else {
+    return logObject;
+  }
 }
+module.exports.getLogObject = getLogObject;
 
 function simpleJsonLogger(host, port, options) {
   return function(req, res, next) {
@@ -80,16 +85,19 @@ function simpleJsonLogger(host, port, options) {
         console.log(logEntry);
       }
 
-
       if (host && port) {
-        var message = new Buffer(logEntry);
-        client.send(message, 0, message.length, port, host, function(err, bytes) {
-          if (err) throw err;
-        });
-
+        sendUDPMessage(logEntry, host, port);
       }
     });
   next();
   }
 }
-module.exports = simpleJsonLogger;
+module.exports.logger = simpleJsonLogger;
+
+function sendUDPMessage(logEntry, host, port) {
+  var message = new Buffer(logEntry);
+  client.send(message, 0, message.length, port, host, function(err, bytes) {
+    if (err) throw err;
+  });
+}
+module.exports.sendUDPMessage = sendUDPMessage;
