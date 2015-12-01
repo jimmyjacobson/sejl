@@ -52,6 +52,7 @@ function getLogObject(req, res, startAt, options, callback) {
     requestSize: res.body,
     time: getPrettyDate(),
     statusCode: res.statusCode,
+    referrer: req.header('Referer') || null,
   };
   if (req.method === 'PUT' || req.method === 'POST') {
     // get put body
@@ -101,3 +102,4 @@ function sendUDPMessage(logEntry, host, port) {
   });
 }
 module.exports.sendUDPMessage = sendUDPMessage;
+
