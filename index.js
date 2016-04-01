@@ -4,9 +4,19 @@
  * Middleware that logs the path, user agent, time in milliseconds, method and ip ddress in json
  *
  */
-var util = require('util');
-var dgram = require('dgram');
 var onHeaders = require('on-headers');
+var dgram = require('dgram');
+
+var client = dgram.createSocket('udp4');
+
+process.on('SIGINT', function() {
+  if (client) {
+    console.log("Got SIGINT.  Closing client.");
+    client.close();
+    // This seems pretty ghetto.  But I don't know a better way to do it.
+    client = null;
+  }
+});
 
 function getPrettyDate() {
   var d = new Date();
@@ -81,14 +91,9 @@ function simpleJsonLogger(host, port, options) {
 module.exports.logger = simpleJsonLogger;
 
 function sendUDPMessage(logEntry, host, port) {
-  var client = dgram.createSocket('udp4');
   var message = new Buffer(logEntry);
-
   client.send(message, 0, message.length, port, host, function(err, bytes) {
-    if (err) console.error('[SEJL] logstash failure [%s:%d] %s',
-      host, port, util.inspect(err));
-
-    client.close();
+    if (err) throw err;
   });
 }
 module.exports.sendUDPMessage = sendUDPMessage;
