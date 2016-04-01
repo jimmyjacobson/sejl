@@ -49,15 +49,10 @@ function getLogObject(req, res, startAt, options, callback) {
     ip: req.connection.remoteAddress,
     ip: ipv4,
     ipv6: ipv4,
-    requestSize: res.body,
     time: getPrettyDate(),
     statusCode: res.statusCode,
     referrer: req.header('Referer') || null,
   };
-  if (req.method === 'PUT' || req.method === 'POST') {
-    // get put body
-    logObject['requestBody'] = req.body;
-  }
 
   if (options.loggedFromEnv) {
     options.loggedFromEnv.forEach(function(envVar) {
