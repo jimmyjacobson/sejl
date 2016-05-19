@@ -1,7 +1,5 @@
 # simple-express-json-logger
 
-**NOTICE: This library has been deprecated in favor of [Koala](https://github.com/wedgies/koala).**
-
 simple-express-json-logger is a simple express middleware that will output a very simple log in JSON format.
 
 requestTimeLength is in milliseconds.
